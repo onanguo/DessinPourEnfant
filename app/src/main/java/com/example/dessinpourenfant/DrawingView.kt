@@ -18,8 +18,9 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     private var mDrawPaint : Paint? = null
     private var mCanvasPaint : Paint? = null
     private var mBrushSize : Float = 0.toFloat()
-    private var color = Color.RED
+    private var color = Color.BLACK
     private var canvas : Canvas? = null
+    private val mPath= ArrayList<CustomPath>()
 
     init {
         setUpDrawing()
@@ -45,6 +46,11 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
         canvas?.drawBitmap(mCanvasBitmap!!, 0f, 0f, mCanvasPaint )
+        for (Path in mPath){
+            mDrawPaint!!.strokeWidth = Path!!.BrushThickness
+            mDrawPaint!!.color = Path!!.color
+            canvas?.drawPath(Path!!, mDrawPaint!!)
+        }
         if(!mDrawPath!!.isEmpty){
             mDrawPaint!!.strokeWidth = mDrawPath!!.BrushThickness
             mDrawPaint!!.color = mDrawPath!!.color
@@ -80,6 +86,7 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
                 }
             }
             MotionEvent.ACTION_UP ->{
+                mPath.add(mDrawPath!!)
                 mDrawPath= CustomPath(color, mBrushSize)
             }
             else ->{
@@ -90,7 +97,5 @@ class DrawingView(context: Context, attrs: AttributeSet) : View(context, attrs) 
         return true
     }
 
-    internal inner class  CustomPath(var color : Int, var BrushThickness: Float) : Path(){
-
-    }
+    internal inner class  CustomPath(var color : Int, var BrushThickness: Float) : Path()
 }
